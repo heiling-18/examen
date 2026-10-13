@@ -1,0 +1,8 @@
+ID | CLIENTE | EMPLEADO | MONTO | TOTAL | SALDO | CUOTAS | INICIO | VENCE | ESTADO
+--------------------------------------------------------------------------------------------------------
+1 | heilig gisselle leon bernal | pep | $0.1 | $0.19 | $0.0 | 222 | 2026-10-03 | 2045-04-03 | PAGADO
+2 | heilig gisselle leon bernal | pep | $100.0 | $160.0 | $159.9 | 55 | 2026-10-03 | 2031-05-03 | PENDIENTE
+3 | defre | jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj | $2222.0 | $2288.66 | $2288.66 | 543 | 2026-10-03 | 2072-01-03 | PENDIENTE
+4 | heilig gisselle leon bernal | pep | $4567.0 | $4749.68 | $4749.68 | 777 | 2024-10-09 | 2027-10-09 | PENDIENTE
+5 | heilig gisselle leon bernal | pep | $456789.0 | $465924.78 | $465924.78 | 876 | 2025-10-02 | 2026-10-01 | PENDIENTE
+6 | sebastian murillo | sebastian feooo | $200000.0 | $280000.0 | $280000.0 | 100 | 2026-10-06 | 2026-10-07 | PENDIENTE
