@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.crediya.app.controlador;
+package com.mycompany.examen.controlador;
 
-import com.mycompany.crediya.app.Modelo.Persistencia.ClienteDAO;
-import com.mycompany.crediya.app.model.Cliente;
+import com.mycompany.examen.Modelo.Persistencia.ClienteDAO;
+import com.mycompany.examen.model.Cliente;
 import java.sql.SQLException;
 import java.util.List;
 

@@ -1,11 +1,11 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
-package com.mycompany.crediya.app.vista;
+package com.mycompany.examen.vista;
 
-import com.mycompany.crediya.app.Modelo.Persistencia.GestorArchivos;
-import com.mycompany.crediya.app.controlador.*;
-import com.mycompany.crediya.app.model.*;
+import com.mycompany.examen.Modelo.Persistencia.GestorArchivos;
+import com.mycompany.examen.controlador.*;
+import com.mycompany.examen.model.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
