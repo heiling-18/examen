@@ -10,8 +10,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Controlador para la gestion de Clientes.
- * Aplica reglas de negocio y lanza excepciones especificas segun el tipo de error.
  * 
  * @author Heiling
  */

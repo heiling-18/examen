@@ -5,10 +5,12 @@
 package com.mycompany.examen.model;
 
 /**
- *
+ * Enumeracion que define los estados posibles de un prestamo.
+ * 
  * @author Heiling
  */
 public enum EstadoPrestamo {
     PENDIENTE,
-    PAGADO
+    PAGADO,
+    CANCELADO
 }

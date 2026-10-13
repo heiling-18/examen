@@ -4,6 +4,7 @@
  */
 package com.mycompany.examen.vista;
 
+import com.mycompany.examen.controlador.GestorPagos;
 import com.mycompany.examen.controlador.PagoControlador;
 import com.mycompany.examen.controlador.PrestamoControlador;
 import com.mycompany.examen.model.EstadoPrestamo;
@@ -14,9 +15,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Vista modular para el CRUD completo de Pagos y Abonos.
- * Implementa captura validada y captura granular de excepciones segun su tipo.
- * 
+ 
+
  * @author Heiling
  */
 public class PagoVista {
@@ -24,11 +24,13 @@ public class PagoVista {
     private Scanner sc;
     private PagoControlador pagoCtrl;
     private PrestamoControlador prestamoCtrl;
+    private GestorPagos gestorPagos;
 
     public PagoVista(Scanner sc, PagoControlador pagoCtrl, PrestamoControlador prestamoCtrl) {
         this.sc = sc;
         this.pagoCtrl = pagoCtrl;
         this.prestamoCtrl = prestamoCtrl;
+        this.gestorPagos = new GestorPagos();
     }
 
     public void mostrarMenu() {
@@ -40,6 +42,7 @@ public class PagoVista {
             System.out.println("2. Ver Historico de Pagos de un Prestamo");
             System.out.println("3. Modificar Monto de un Abono");
             System.out.println("4. Anular / Eliminar Abono");
+            System.out.println("5. Modulo Gestor de Pagos (Examen)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Opcion: ");
             op = sc.nextLine().trim();
@@ -58,10 +61,13 @@ public class PagoVista {
                     case "4":
                         anularAbono();
                         break;
+                    case "5":
+                        gestorPagos.ejecutarMenu(sc);
+                        break;
                     case "0":
                         break;
                     default:
-                        System.out.println("Opcion no valida. Seleccione una opcion del 0 al 4.");
+                        System.out.println("Opcion no valida. Seleccione una opcion del 0 al 5.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Error de formato numerico: " + e.getMessage());
@@ -93,7 +99,7 @@ public class PagoVista {
 
     private void verHistoricoPagos() {
         System.out.println();
-        System.out.println("--- Consulta De Historico De Pagos ---");
+        System.out.println("--- Consulta De Historial De Pagos ---");
         int prestamoId = 0;
         try {
             System.out.print("ID del Prestamo a consultar: ");

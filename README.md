@@ -13,16 +13,17 @@ Solución de software modular desarrollada en **Java** bajo el paradigma de **Pr
 ## Tabla de Contenidos
 1. [Descripción General](#-descripción-general)
 2. [Características Principales](#-características-principales)
-3. [Principios de POO Aplicados](#-principios-de-programación-orientada-a-objetos-poo)
-4. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-5. [Diagrama de Clases UML](#-diagrama-de-clases-uml)
-6. [Persistencia y Base de Datos](#-persistencia-y-base-de-datos)
-7. [Reportes con Java Stream API y Lambdas](#-reportes-con-java-stream-api-y-lambdas)
-8. [Estructura del Proyecto](#-estructura-del-proyecto)
-9. [Requisitos del Entorno](#-requisitos-del-entorno)
-10. [Instrucciones de Instalación y Ejecución](#-instrucciones-de-instalación-y-ejecución)
-11. [Gestión de Errores y Jerarquía de Excepciones](#️-gestión-de-errores-y-jerarquía-de-excepciones)
-12. [Autor](#-autor)
+3. [Módulo Gestor de Pagos (GestorPagos)](#-módulo-gestor-de-pagos-gestorpagos)
+4. [Principios de POO Aplicados](#-principios-de-programación-orientada-a-objetos-poo)
+5. [Arquitectura del Sistema](#-arquitectura-del-sistema)
+6. [Diagrama de Clases UML](#-diagrama-de-clases-uml)
+7. [Persistencia y Base de Datos](#-persistencia-y-base-de-datos)
+8. [Reportes con Java Stream API y Lambdas](#-reportes-con-java-stream-api-y-lambdas)
+9. [Estructura del Proyecto](#-estructura-del-proyecto)
+10. [Requisitos del Entorno](#-requisitos-del-entorno)
+11. [Instrucciones de Instalación y Ejecución](#-instrucciones-de-instalación-y-ejecución)
+12. [Gestión de Errores y Jerarquía de Excepciones](#️-gestión-de-errores-y-jerarquía-de-excepciones)
+13. [Autor](#-autor)
 
 ---
 
@@ -33,7 +34,7 @@ Antes de esta solución, **CrediYa S.A.S.** gestionaba sus colocaciones creditic
 Esta aplicación de consola interactiva y robusta automatiza:
 - El registro validado en tiempo real de clientes y asesores/empleados.
 - La colocación de préstamos con cálculo automatizado de interés, monto total y valor de cuota fija.
-- El registro de abonos parciales o totales, deduciendo el saldo en tiempo real y cambiando automáticamente el estado a `PAGADO` cuando se liquida la deuda.
+- El registro de abonos parciales o totales, deduciendo el saldo en tiempo real y cambiando automáticamente el estado a `PAGADO` o `CANCELADO` cuando se liquida la deuda.
 - Generación de reportes analíticos de cartera utilizando **Java Streams**.
 - Persistencia híbrida mediante **MySQL** (para transaccionalidad relacional) y **Archivos Planos TXT** (para respaldos e interoperabilidad).
 
@@ -42,14 +43,29 @@ Esta aplicación de consola interactiva y robusta automatiza:
 ##  Características Principales
 
 * **Operaciones CRUD Completas**: Capacidad de Crear (Create), Leer/Listar (Read), Modificar (Update) y Eliminar (Delete) en todos los módulos: Clientes, Empleados, Préstamos y Pagos/Abonos.
-* **Manejo Granular de Excepciones**: Captura jerárquica de excepciones específicas en controladores y vistas (`NumberFormatException`, `DateTimeParseException`, `IllegalArgumentException`, `IllegalStateException`, `SQLException`), informando con claridad la causa exacta de cualquier inconsistencia o restricción de base de datos.
+* **Manejo Granular de Excepciones**: Captura jerárquica de excepciones específicas en controladores y vistas (`NumberFormatException`, `DateTimeParseException`, `IllegalArgumentException`, `IllegalStateException`, `SQLException`, `PrestamoNoEncontradoException`), informando con claridad la causa exacta de cualquier inconsistencia o restricción de base de datos.
 * **Validaciones Inmediatas en Cascada**: Validación de tipos de datos en tiempo real mediante bucles interactivos (`while(true)`); impide el avance si el formato de correo, documento numérico, salario, tasa de interés (0% - 100%) o fechas (`AAAA-MM-DD`) son incorrectos. Nunca expulsa al usuario al menú principal por un error tipográfico.
 * **Cálculo Financiero Preciso**:
   $$\text{Monto Total} = \text{Monto} \times \left(1 + \frac{\text{Interés}}{100}\right)$$
   $$\text{Valor Cuota} = \frac{\text{Monto Total}}{\text{Número de Cuotas}}$$
-* **Gestión de Abonos Inteligente**: Valida que ningún abono supere el saldo pendiente. Si el saldo llega a `$0.00`, el crédito transiciona automáticamente a estado `PAGADO`. Permite además modificar montos o anular abonos recalculando y restaurando el saldo pendiente del préstamo.
+* **Gestión de Abonos Inteligente**: Valida que ningún abono supere el saldo pendiente. Si el saldo llega a `$0.00`, el crédito transiciona automáticamente a estado `PAGADO` o `CANCELADO`. Permite además modificar montos o anular abonos recalculando y restaurando el saldo pendiente del préstamo.
 * **Submenús de Retorno Controlado**: Cada submódulo permanece en ejecución continua hasta que el usuario digita explícitamente `0. Volver al menu principal`.
 * **Exportación Automatizada a `.txt`**: Genera reportes tabulares organizados con encabezados limpios (`empleados.txt`, `clientes.txt`, `prestamos.txt`, `pagos.txt`).
+
+---
+
+## 💳 Módulo Gestor de Pagos (`GestorPagos`)
+
+Se integró la clase **`GestorPagos`** para registrar y controlar abonos a los préstamos de forma sencilla y segura:
+
+* **Registrar un Pago:** Permite ingresar el ID del préstamo, la cantidad a abonar y la fecha del pago.
+* **Validación de Préstamo Inexistente:** Antes de guardar, revisa en MySQL si el ID del préstamo existe. Si no existe, lanza la excepción personalizada **`PrestamoNoEncontradoException`** y muestra el mensaje de error directamente sin detener el programa.
+* **Actualización del Saldo y Estado:** Resta el abono del saldo pendiente. Si la deuda queda completamente liquidada (`$0.00`), cambia de forma automática el estado del préstamo a `"CANCELADO"`.
+* **Historial Cronológico:** Muestra en pantalla la lista de todos los pagos de un préstamo ordenados por fecha (desde el más antiguo hasta el más reciente).
+* **Filtros Rápidos con Stream API:**
+  * **Pagos del último mes:** Filtra usando Java Streams los abonos realizados en los últimos 30 días.
+  * **Pagos por rango de fechas:** Permite consultar los abonos realizados entre dos fechas específicas.
+* **Cierre Seguro de Conexiones:** En el bloque `finally` se cierran siempre las conexiones a MySQL (`Connection`, `PreparedStatement`, `ResultSet`) para proteger los recursos del sistema.
 
 ---
 
@@ -302,7 +318,7 @@ El módulo de reportes analíticos (`ReporteControlador.java`) aprovecha las cap
 ##  Estructura del Proyecto
 
 ```text
-crediya-app/
+examen/
 ├── pom.xml                               # Configuración de dependencias Maven
 ├── crediya_db.sql                        # Script de creación y estructura MySQL
 ├── README.md                             # Documentación oficial del proyecto
@@ -314,12 +330,12 @@ crediya-app/
 └── src/
     └── main/
         └── java/
-            └── com/mycompany/crediya/app/
+            └── com/mycompany/examen/
                 ├── model/
                 │   ├── Persona.java             # Clase abstracta base
                 │   ├── Cliente.java             # Entidad Cliente (hereda de Persona)
                 │   ├── Empleado.java            # Entidad Empleado (hereda de Persona)
-                │   ├── EstadoPrestamo.java      # Enum (PENDIENTE, PAGADO)
+                │   ├── EstadoPrestamo.java      # Enum (PENDIENTE, PAGADO, CANCELADO)
                 │   ├── Prestamo.java            # Entidad Préstamo y lógica de cuotas
                 │   └── Pago.java                # Entidad Pago / Abono
                 ├── Modelo/Persistencia/
@@ -335,14 +351,16 @@ crediya-app/
                 │   ├── EmpleadoControlador.java # Lógica de empleados
                 │   ├── PrestamoControlador.java # Lógica de préstamos y validación
                 │   ├── PagoControlador.java     # Lógica de abonos y actualización
-                │   └── ReporteControlador.java  # Reportes con Streams y Lambdas
+                │   ├── ReporteControlador.java  # Reportes con Streams y Lambdas
+                │   ├── GestorPagos.java         # Módulo Gestor de Pagos (Examen)
+                │   └── PrestamoNoEncontradoException.java # Excepción personalizada
                 └── vista/
-                    ├── CrediyaApp.java          # Clase principal y orquestador del menu
-                    ├── EmpleadoVista.java       # Submenu y validaciones de Empleados
-                    ├── ClienteVista.java        # Submenu y validaciones de Clientes
-                    ├── PrestamoVista.java       # Submenu y registro de Prestamos
-                    ├── PagoVista.java           # Submenu y gestion de Pagos / Abonos
-                    └── ReporteVista.java        # Submenu para consultas de Reportes
+                    ├── CrediyaApp.java          # Clase principal y orquestador del menú
+                    ├── EmpleadoVista.java       # Submenú y validaciones de Empleados
+                    ├── ClienteVista.java        # Submenú y validaciones de Clientes
+                    ├── PrestamoVista.java       # Submenú y registro de Préstamos
+                    ├── PagoVista.java           # Submenú y gestión de Pagos / Abonos
+                    └── ReporteVista.java        # Submenú para consultas de Reportes
 ```
 
 ---
@@ -406,6 +424,7 @@ El sistema implementa una arquitectura defensiva en todas sus capas (Controlador
 | `DateTimeParseException` | Formato de fecha distinto a `AAAA-MM-DD` | `PrestamoVista` | Informa la sintaxis requerida sin abortar el flujo de captura |
 | `IllegalArgumentException` | Reglas de negocio inválidas (salario <= 0, interés fuera de 0-100%, fecha fin < inicio, abono > saldo) | Controladores | Informa la regla infringida y preserva el estado previo |
 | `IllegalStateException` | Estados inconsistentes (abono a crédito pagado, entidad inexistente por ID) | Controladores | Notifica la improcedencia de la acción |
+| `PrestamoNoEncontradoException` | Intento de registrar o consultar un pago a un préstamo que no existe en la base de datos | `GestorPagos` | Informa que el préstamo no existe de forma clara sin cerrar la app |
 | `SQLException` | Violaciones de integridad en MySQL (cédula `UNIQUE` duplicada [1062], restricción `FOREIGN KEY` [1451]) | Capa DAO / Controladores | Traduce el código de error SQL a un mensaje claro y comprensible |
 
 ---
